@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnosis Pack Viewer</title>
+<style>
+:root{--bg:#fafaf8;--fg:#1d1d1b;--mut:#6b6b66;--line:#deded8;--card:#fff;--hi:#fff1a8;--hid:#c2410c;--clean:#15803d;--fix:#b45309;--drop:#b91c1c;--acc:#2563eb}
+@media (prefers-color-scheme:dark){:root{--bg:#171716;--fg:#e8e8e3;--mut:#9a9a93;--line:#34342f;--card:#1f1f1d;--hi:#5b4d0a;--hid:#fb923c;--clean:#4ade80;--fix:#fbbf24;--drop:#f87171;--acc:#60a5fa}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,sans-serif;height:100vh;display:grid;grid-template-rows:auto 1fr}
+header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid var(--line)}
+header b{font-size:15px}select,input,button,textarea{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+button{cursor:pointer}button.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+main{display:grid;grid-template-columns:230px 1fr 360px;min-height:0}
+#list{overflow:auto;border-right:1px solid var(--line)}#list div{padding:4px 8px;border-bottom:1px solid var(--line);cursor:pointer;font-size:12px;display:flex;gap:6px}
+#list div.cur{background:var(--hi)}#list .ok{color:var(--clean);font-weight:700;width:12px}
+.v-clean{color:var(--clean)}.v-fix{color:var(--fix)}.v-drop{color:var(--drop)}
+#doc{overflow:auto;padding:12px 16px}#meta{color:var(--mut);font-size:12px;margin-bottom:8px;word-break:break-all}
+#text,.preview{font:16px/1.7 "Noto Sans Kannada","Noto Sans Telugu","Noto Sans",system-ui,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere;unicode-bidi:plaintext}
+.ln{color:var(--mut);font:11px monospace;user-select:none;margin-right:6px}
+.hid{color:var(--hid);background:color-mix(in srgb,var(--hid) 15%,transparent);font:11px monospace;border-radius:3px;padding:0 2px}
+.hid.neutral{color:var(--mut);background:var(--card)}
+mark{background:var(--hi);color:inherit}.off{color:var(--acc);font-weight:700}
+#side{overflow:auto;border-left:1px solid var(--line);padding:10px 12px}#side h3{margin:12px 0 4px;font-size:13px}
+.ai{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px;font-size:12px;word-break:break-word}
+.codes{display:grid;grid-template-columns:repeat(5,1fr);gap:2px 4px;font-size:12px}.codes label{white-space:nowrap}
+textarea{width:100%;min-height:70px}input.w{width:100%}.warn{font-size:11px;color:var(--drop)}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.kbd{font:11px monospace;color:var(--mut)}
+#scan{font:11px monospace;color:var(--mut);white-space:pre-wrap}
+.inventory{max-height:55vh;overflow:auto;border:1px solid var(--line);padding:8px}
+#normalization{margin-top:16px;border-top:1px solid var(--line);padding-top:8px}
+#normalization summary{cursor:pointer}#normalization p{max-width:85ch}
+.diff{border:1px solid var(--line);padding:8px;margin:8px 0;overflow-wrap:anywhere}
+.diff pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 monospace}
+.preview{max-height:40vh;overflow:auto;padding:8px;border:1px solid var(--line)}
+.finding{border:1px solid var(--line);border-radius:6px;padding:6px;margin:6px 0;font-size:12px;overflow-wrap:anywhere}
+.finding summary,#manual-checks summary{cursor:pointer}.finding ul{padding-left:18px}
+.finding .caution{color:var(--mut)}#manual-list{padding-left:18px;font-size:12px}
+.draft-badge{color:var(--fix);font-weight:700}#draft-status{display:block;margin:6px 0;white-space:pre-wrap}
+.hit{background:color-mix(in srgb,var(--acc) 13%,transparent);text-decoration:underline dotted var(--acc)}
+#csv-preview{font:11px/1.5 monospace;min-height:90px}#selection-status{overflow-wrap:anywhere}
+.word-actions{position:sticky;top:0;z-index:2;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line)}
+#text.markdown{white-space:normal}#text.markdown pre{white-space:pre-wrap}#text.markdown table{border-collapse:collapse}
+@media (max-width:900px){main{grid-template-columns:1fr}#list{max-height:160px}#side{border-left:0}}
+</style></head><body>
+<header><b id="pk">diagnosis viewer</b><span id="prog"></span>
+<select id="flt"><option value="all">all docs</option><option value="todo">not reviewed</option><option value="done">reviewed</option><option value="chg">changed vs AI</option><option value="v:clean">start: clean</option><option value="v:fix">start: fix</option><option value="v:drop">start: drop</option><option value="nolab">no label yet</option></select>
+<input id="dz" placeholder="disease, e.g. D4" size="9"><input id="q" placeholder="search text" size="14">
+<button id="prev">◀ k</button><button id="next">j ▶</button>
+<label>Row <input id="row-number" type="number" min="1" step="1" style="width:80px"></label><button id="open-row">Open row</button>
+<input id="doc-id" placeholder="doc_id" size="17"><button id="open-id">Open ID</button>
+<span class="kbd">c = select clean · s = save · h = hex</span><a href="export.csv" download="labels.csv"><button>Export labels.csv</button></a></header>
+<main><div id="list"></div>
+<div id="doc"><div id="meta"></div>
+<div class="row"><label>Text view <select id="text-mode"><option value="visible">Visible characters</option><option value="original">Original text</option><option value="markdown">Markdown preview</option></select></label><button id="toggle-findings" type="button">Toggle candidate highlights</button></div>
+<p class="kbd">Offsets count Unicode code points from 0. Visible markers are inspection aids, not disease labels.
+ZWJ and ZWNJ are valid Indic characters. Markers can affect shaping; compare Original text.
+Font shaping alone is not evidence of G1/G2; verify source code points.</p>
+<div class="row word-actions"><span id="selection-status" class="kbd" role="status">Click a word, or select a phrase, then mark it.</span>
+<button id="selection-g1" type="button">Mark G1</button><button id="selection-g2" type="button">Mark G2</button><button id="selection-a6" type="button">Mark A6</button><button id="selection-d4" type="button">Mark D4</button><button id="selection-c1" type="button">Mark C1</button></div>
+<div id="text"></div>
+<h3>Complete character inventory</h3><button id="toggle-hex" aria-expanded="false" aria-controls="scan">Show all characters (h)</button>
+<div class="row"><label>Start offset <input id="unicode-start" type="number" min="0" step="1" style="width:100px"></label>
+<label>End (excluded) <input id="unicode-end" type="number" min="0" step="1" style="width:100px"></label>
+<button id="unicode-range" type="button">Show range</button><button id="unicode-all" type="button">Show all</button></div>
+<p id="range-status" class="kbd" role="status"></p>
+<pre id="scan" class="inventory" hidden></pre>
+<details id="audit"><summary>Whole-document audit — hidden characters and mixed digits</summary>
+<p class="kbd">Hints for review. Counts cover the entire document. Ordinary spaces and LF remain in the complete inventory.
+Mixed digit scripts do not prove earlier normalization damage. Review A5 below and G1 in Candidate checks.</p>
+<div id="audit-result">Loading audit…</div></details>
+<details id="normalization"><summary>NFC / NFKC comparison — A5 and G4 guidance</summary>
+<p><b>A5:</b> an NFC difference is a candidate for review. Canonically equivalent forms should normally look and mean the same thing.
+Under DISEASES.md, record any observed change in appearance or meaning, with original offsets and both sequences.
+For example: U+0C95 U+0CC6 U+0CC2 → U+0C95 U+0CCA (ಕೊ).</p>
+<p><b>G4:</b> NFKC previews show what applying normalization now would do. They cannot prove earlier cleaning damage.
+Confirm G4 using source text or cleaning history. Kannada digits ೦೧೨೩೪೫೬೭೮೯ remain unchanged under both NFC and NFKC;
+conversion to ASCII 0123456789 needs a separate mapping. ASCII digits alone do not prove G4.</p>
+<p class="kbd">All previews are read-only. Ranges use [start, end): the end is excluded. Nearby changes may share a range.</p>
+<div id="normalization-result">Loading comparison…</div>
+<p class="kbd">References: <a href="https://www.unicode.org/reports/tr15/" target="_blank" rel="noreferrer">Unicode normalization</a> ·
+<a href="https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt" target="_blank" rel="noreferrer">Unicode character data</a></p>
+</details></div>
+<div id="side">
+<section aria-label="Candidate checks">
+<h3>Candidate checks</h3><p class="kbd">Suggestions only. Review the full document and choose labels yourself.
+Jump buttons inspect a source range without changing your form.</p>
+<p id="candidate-status" role="status">Loading candidate checks…</p><div id="candidates"></div>
+<details id="manual-checks"><summary>Coverage and manual-review checks</summary>
+<p id="checked-codes" class="kbd"></p><ul id="manual-list"></ul></details>
+</section>
+<h3>Starting label (from --labels)</h3><div class="ai" id="ai"></div>
+<div class="row"><button class="pri" id="confirm">Confirm starting label</button></div>
+<h3>Your label</h3><span id="draft-status" class="kbd" role="status"></span>
+<button id="discard-draft" type="button" hidden>Discard local draft</button>
+<div class="row"><button id="clean" type="button">Select clean (c)</button></div>
+<div class="row"><label><input type="radio" name="rd" value="full"> full</label><label><input type="radio" name="rd" value="partial"> partial</label></div>
+<div class="row"><label class="v-clean"><input type="radio" name="vd" value="clean"> clean</label><label class="v-fix"><input type="radio" name="vd" value="fix"> fix</label><label class="v-drop"><input type="radio" name="vd" value="drop"> drop</label></div>
+<div class="codes" id="codes"></div>
+<p class="kbd">Clean may include D3, H3, or both. Other disease codes require fix or drop.</p>
+<h3>Evidence</h3><textarea id="ev"></textarea>
+<div class="warn">F1/E3: type and offset only. Never the value. Leave hex empty.</div>
+<h3>Hex (A/G only)</h3><input class="w" id="hx"><h3>Note</h3><input class="w" id="nt">
+<div class="row"><button class="pri" id="save">Save my label (s)</button><span id="st" class="kbd"></span></div>
+<details><summary>Current labels.csv row</summary><textarea id="csv-preview" readonly aria-label="CSV preview"></textarea></details>
+</div></main>
+<script>
+let D=[],C={},R={},view=[],cur=0,showHex=false;
+let inspection=null,inspectionRequest=null,inspectionGeneration=0;
+let candidateFocus=null;
+let selectionRange=null,showFindings=true;
+let inventoryRange=null;
+let draftPack="",cursorStorageKey="",formDocument=null;
+const drafts=new Map(),draftStorageErrors=new Map();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const EMPTY={read:"full",verdict:"",diseases:"",evidence:"",hex:"",note:""};
+const lab=d=>R[d.doc_id]||d.label||EMPTY;
+const FORM_FIELDS=["read","verdict","diseases","evidence","hex","note"];
+function spacingFields(fields){
+  fields={...fields};
+  fields.diseases=[...new Set(fields.diseases.split(";").map(code=>/^A[789]$/.test(code.trim())?"G1":code.trim()).filter(Boolean))].join(";");
+  fields.evidence=fields.evidence.replace(/\bA[789](\s*:)/g,"G1$1");
+  return fields;
+}
+function labelFields(label){return spacingFields(Object.fromEntries(FORM_FIELDS.map(k=>[k,String(label?.[k]??(k==="read"?"full":""))])));}
+function sameFields(a,b){return FORM_FIELDS.every(k=>k==="diseases"?
+  a[k].split(";").filter(Boolean).sort().join(";")===b[k].split(";").filter(Boolean).sort().join(";"):a[k]===b[k]);}
+function readForm(){return {
+  read:document.querySelector("[name=rd]:checked")?.value||"full",
+  verdict:document.querySelector("[name=vd]:checked")?.value||"",
+  diseases:[...document.querySelectorAll("#codes input:checked")].map(x=>x.value).join(";"),
+  evidence:$("ev").value,hex:$("hx").value,note:$("nt").value
+};}
+function draftKey(docId){return "diagnosis:draft:v1:"+JSON.stringify([draftPack,docId]);}
+function getDraft(docId){
+  if(!draftPack)return null;if(drafts.has(docId))return drafts.get(docId);
+  let draft=null;
+  try{
+    const raw=localStorage.getItem(draftKey(docId));
+    if(raw!==null){
+      const value=JSON.parse(raw);
+      if(value?.version!==1||!FORM_FIELDS.every(k=>typeof value.fields?.[k]==="string"))throw new Error("Unreadable draft");
+      draft={...value,fields:spacingFields(value.fields)};
+    }
+  }catch(e){draftStorageErrors.set(docId,"Could not read the browser draft. Browser storage may be unavailable or the stored draft may be unreadable.");}
+  drafts.set(docId,draft);return draft;
+}
+function removeDraft(docId){
+  drafts.set(docId,null);
+  try{localStorage.removeItem(draftKey(docId));draftStorageErrors.delete(docId);}
+  catch(e){draftStorageErrors.set(docId,"The draft could not be removed from browser storage; an older draft may reappear after reload.");}
+}
+function persistDraft(){
+  if(!draftPack||!formDocument)return;
+  renderCsvPreview();
+  const docId=formDocument.doc_id,fields=readForm(),previous=getDraft(docId);
+  if(sameFields(fields,labelFields(lab(formDocument)))){
+    if(previous)removeDraft(docId);
+  }else{
+    const draft={version:1,fields,updated_at:new Date().toISOString()};drafts.set(docId,draft);
+    try{localStorage.setItem(draftKey(docId),JSON.stringify(draft));draftStorageErrors.delete(docId);}
+    catch(e){draftStorageErrors.set(docId,"Draft kept in this tab only: browser storage is unavailable or full. Copy your edits before closing.");}
+  }
+  renderDraftStatus(docId);
+}
+function renderDraftStatus(docId=formDocument?.doc_id){
+  if(docId==null||!draftPack){$("draft-status").textContent="";$("discard-draft").hidden=true;return;}
+  const draft=getDraft(docId),error=draftStorageErrors.get(docId);
+  // persistDraft can flush the previous row after cur has already changed.
+  if(formDocument?.doc_id===docId){
+    $("draft-status").textContent=error||(draft?"Browser draft saved locally — not submitted.":"No unsaved draft.");
+    $("draft-status").className=error?"warn":"kbd";$("discard-draft").hidden=!draft;
+  }
+  const badge=$("list").querySelector(`[data-i="${formDocument?.doc_id===docId?formDocument.i:-1}"] .draft-badge`);
+  if(badge)badge.textContent=draft?"✎":"";
+}
+function discardDraft(){
+  if(!formDocument)return;removeDraft(formDocument.doc_id);formDocument=null;render();list();
+}
+async function init(){
+  const [P,RV]=await Promise.all(["data.json","reviews"].map(u=>fetch(u).then(r=>r.json())));D=P.docs;C=P.codes;R=RV;$("pk").textContent=P.pack;
+  draftPack=P.pack_key||P.pack;cursorStorageKey="cur:"+draftPack;
+  $("codes").innerHTML=Object.keys(C).map(k=>`<label title="${esc(C[k])}"><input type="checkbox" value="${k}"> ${k}</label>`).join("");
+  ["flt","dz","q"].forEach(id=>$(id).oninput=()=>{filter();});
+  $("prev").onclick=()=>go(-1);$("next").onclick=()=>go(1);$("confirm").onclick=confirmAI;$("save").onclick=saveMine;$("clean").onclick=selectClean;
+  $("text-mode").onchange=renderText;$("toggle-hex").onclick=toggleHex;
+  $("unicode-range").onclick=showUnicodeRange;$("unicode-all").onclick=()=>{inventoryRange=null;$("range-status").textContent="";showHex=true;renderInventory();};
+  $("open-row").onclick=()=>openRow($("row-number").value);
+  $("row-number").onkeydown=e=>{if(e.key==="Enter")openRow(e.target.value);};
+  $("open-id").onclick=()=>openDocId($("doc-id").value);
+  $("doc-id").onkeydown=e=>{if(e.key==="Enter")openDocId(e.target.value);};
+  $("toggle-findings").onclick=()=>{showFindings=!showFindings;renderText();};
+  $("text").onmouseup=captureSelection;$("text").onkeyup=captureSelection;$("text").onclick=pickClickedWord;
+  for(const code of ["G1","G2","A6","D4","C1"]){const button=$("selection-"+code.toLowerCase());
+    button.onmousedown=e=>e.preventDefault();button.onclick=()=>appendSelection(code);}
+  $("audit").open=!!P.audit_open;
+  $("audit-result").onclick=e=>{const button=e.target.closest("button[data-start]");if(button)jumpToCandidate(+button.dataset.start,+button.dataset.end);};
+  $("side").oninput=persistDraft;$("side").onchange=persistDraft;$("discard-draft").onclick=discardDraft;
+  window.addEventListener("pagehide",persistDraft);
+  $("candidates").onclick=e=>{const append=e.target.closest('[data-action="append-evidence"]');
+    if(e.target.closest('[data-action="append-navigation"]'))appendNavigationEvidence();
+    else if(append)appendFindingEvidence(append.dataset.code,append.dataset.match===undefined?null:+append.dataset.match);
+    else{const button=e.target.closest("button[data-start]");if(button)jumpToCandidate(+button.dataset.start,+button.dataset.end);}};
+  document.onkeydown=e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.repeat||e.isComposing||e.target.isContentEditable||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+    if(e.key=="j")go(1);else if(e.key=="k")go(-1);else if(e.key=="c")selectClean();else if(e.key=="s")saveMine();else if(e.key=="h")toggleHex();};
+  try{cur=+(localStorage.getItem(cursorStorageKey)??localStorage.getItem("cur:"+P.pack))||0}catch(e){}
+  if(Number.isInteger(P.initial_index)&&P.initial_index>=0&&P.initial_index<D.length)cur=P.initial_index;
+  filter(true);
+}
+function openRow(value){
+  if(!/^[0-9]+$/.test(String(value))||!Number.isSafeInteger(+value)||+value<1||+value>D.length)return alertMsg(`Row must be between 1 and ${D.length}`);
+  cur=+value-1;render();list();
+}
+function openDocId(value){
+  const index=D.findIndex(d=>d.doc_id===String(value).trim());
+  if(index<0)return alertMsg("doc_id not found in this pack");
+  cur=index;render();list();
+}
+function renderCsvPreview(){
+  const fields=readForm(),quote=value=>/[",\r\n]/.test(value)?'"'+value.replace(/"/g,'""')+'"':value;
+  $("csv-preview").value="doc_id,read,verdict,diseases,evidence,hex,note\n"+
+    [formDocument?.doc_id||"",...FORM_FIELDS.map(k=>fields[k])].map(quote).join(",");
+}
+function captureSelection(){
+  const root=$("text"),selection=window.getSelection();
+  if(!selection?.rangeCount||selection.isCollapsed||$("text-mode").value==="markdown")return;
+  const range=selection.getRangeAt(0);
+  if(!root.contains(range.startContainer)||!root.contains(range.endContainer))return;
+  function offset(node,position,isEnd){
+    const prefix=document.createRange();
+    if($("text-mode").value==="original"){
+      prefix.selectNodeContents(root);prefix.setEnd(node,position);return Array.from(prefix.toString()).length;
+    }
+    const element=node.nodeType===3?node.parentElement:node;
+    const span=element.closest?.("[data-off]");
+    if(span){
+      prefix.selectNodeContents(span);prefix.setEnd(node,position);
+      const length=prefix.toString().length;
+      return +span.dataset.off+(isEnd?(length>0?1:0):(length===span.textContent.length?1:0));
+    }
+    // A selection boundary between child spans, or in an inserted line label.
+    // Find the next source character; line labels and offset arrows carry no data-off.
+    const boundary=document.createRange();boundary.setStart(node,position);boundary.collapse(true);
+    for(const item of root.querySelectorAll("[data-off]")){
+      const probe=document.createRange();probe.selectNode(item);
+      if(boundary.compareBoundaryPoints(0,probe)<=0)return +item.dataset.off;
+    }
+    return Array.from(D[cur].text).length;
+  }
+  setSelectionRange(offset(range.startContainer,range.startOffset,false),offset(range.endContainer,range.endOffset,true));
+}
+function pickClickedWord(event){
+  if($("text-mode").value==="markdown"||!window.getSelection()?.isCollapsed)return;
+  if($("text-mode").value==="visible"){
+    const span=event.target.closest?.("[data-off]");
+    if(span)pickWordAt(+span.dataset.off);
+    return;
+  }
+  const caret=document.caretPositionFromPoint?.(event.clientX,event.clientY);
+  const fallback=caret?null:document.caretRangeFromPoint?.(event.clientX,event.clientY);
+  const node=caret?.offsetNode||fallback?.startContainer;
+  if(!node||!$("text").contains(node))return;
+  const range=document.createRange();range.selectNodeContents($("text"));
+  range.setEnd(node,caret?caret.offset:fallback.startOffset);
+  let offset=Array.from(range.toString()).length;
+  const chars=Array.from(D[cur].text);
+  if(offset>0&&(offset===chars.length||/\s/u.test(chars[offset]))&&/[\p{L}\p{M}\p{N}\u200c\u200d]/u.test(chars[offset-1]))offset--;
+  pickWordAt(offset);
+}
+function pickWordAt(offset){
+  const chars=Array.from(D[cur].text),isWord=ch=>ch!==undefined&&/[\p{L}\p{M}\p{N}\u200c\u200d]/u.test(ch);
+  if(!Number.isInteger(offset)||offset<0||offset>=chars.length)return;
+  const match=inspection?.i===cur?(inspection.findings||[])
+    .filter(f=>["G1","G2","A6"].includes(f.code)).flatMap(f=>f.matches)
+    .filter(m=>m.start<=offset&&offset<m.end).sort((a,b)=>(a.end-a.start)-(b.end-b.start))[0]:null;
+  let start=offset,end=offset+1;
+  if(match){start=match.start;end=match.end;}
+  else{
+    if(!isWord(chars[offset])){selectionRange=null;$("selection-status").textContent="Click a word, or select a phrase, then mark it.";return;}
+    while(start>0&&isWord(chars[start-1]))start--;
+    while(end<chars.length&&isWord(chars[end]))end++;
+  }
+  setSelectionRange(start,end);candidateFocus={i:cur,start,end};renderText();
+}
+function setSelectionRange(start,end){
+  const chars=Array.from(D[cur].text);
+  if(!Number.isInteger(start)||!Number.isInteger(end)||start<0||end>chars.length||end<=start)return;
+  while(start<end&&/\s/u.test(chars[start]))start++;
+  while(end>start&&/\s/u.test(chars[end-1]))end--;
+  if(start===end)return;
+  selectionRange={i:cur,start,end};
+  const redact=selectionNeedsRedaction(start,end);
+  $("selection-status").textContent=redact?`Selection at offset ${start}; source values omitted.`:
+    `${chars.slice(start,end).join("")} at offset ${start}`;
+}
+function appendSelection(code){
+  if(selectionRange?.i!==cur)return alertMsg("Click a word or select a phrase in Visible characters or Original text first.");
+  appendFindingEvidence(code,null,[{start:selectionRange.start,end:selectionRange.end,detail:"reader-selected word"}]);
+}
+function selectionNeedsRedaction(start,end){
+  const sensitive=(inspection?.i===cur?(inspection.findings||[]):[]).filter(f=>["F1","E3"].includes(f.code));
+  const ranges=sensitive.flatMap(f=>f.matches);
+  // An unrelated detected phone/email must not hide a reader-selected word.
+  // If the reader marked F1/E3 but no positions are known, keep masking values.
+  return ranges.some(m=>start<m.end&&m.start<end)||
+    (!ranges.length&&readForm().diseases.split(";").some(code=>["F1","E3"].includes(code)));
+}
+function inlineMarkdown(text){
+  let html="",cursor=0;
+  const syntax=/`([^`]+)`|\*\*([^*]+)\*\*|\*([^*]+)\*|\[([^\]]+)\]\(([^\s)]+)\)/g;
+  for(const match of text.matchAll(syntax)){
+    html+=esc(text.slice(cursor,match.index));
+    if(match[1]!==undefined)html+="<code>"+esc(match[1])+"</code>";
+    else if(match[2]!==undefined)html+="<strong>"+esc(match[2])+"</strong>";
+    else if(match[3]!==undefined)html+="<em>"+esc(match[3])+"</em>";
+    else{
+      let href="";try{const u=new URL(match[5]);if(["http:","https:"].includes(u.protocol))href=u.href;}catch(e){}
+      html+=href?`<a href="${esc(href)}" target="_blank" rel="noreferrer">${esc(match[4])}</a>`:esc(match[4]);
+    }
+    cursor=match.index+match[0].length;
+  }
+  return html+esc(text.slice(cursor));
+}
+function markdownPreview(text){
+  let html="",fence=null,code=[],list=null;
+  const closeList=()=>{if(list){html+=`</${list}>`;list=null;}};
+  for(const line of text.split(/\r?\n/)){
+    const marker=line.match(/^\s*(`{3,}|~{3,})(.*)$/);
+    if(fence){
+      if(marker&&marker[1][0]===fence[0]&&marker[1].length>=fence.length&&!marker[2].trim()){
+        html+="<pre><code>"+esc(code.join("\n"))+"</code></pre>";fence=null;code=[];
+      }else code.push(line);
+      continue;
+    }
+    if(marker){closeList();fence=marker[1];continue;}
+    const item=line.match(/^\s*(?:([-+*])|\d+[.)])\s+(.+)$/);
+    if(item){const tag=item[1]?"ul":"ol";if(list!==tag){closeList();html+=`<${tag}>`;list=tag;}
+      html+="<li>"+inlineMarkdown(item[2])+"</li>";continue;}
+    closeList();
+    const heading=line.match(/^(#{1,6})\s+(.+)$/);
+    if(heading){const level=heading[1].length;html+=`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`;}
+    else if(/^>\s?/.test(line))html+="<blockquote>"+inlineMarkdown(line.replace(/^>\s?/,""))+"</blockquote>";
+    else if(line.trim())html+="<p>"+inlineMarkdown(line)+"</p>";
+  }
+  closeList();if(fence)html+="<pre><code>"+esc(code.join("\n"))+"</code></pre>";
+  return html;
+}
+function filter(keep){
+  const f=$("flt").value,dz=$("dz").value.trim().toUpperCase(),q=$("q").value.trim();
+  view=D.filter(d=>{const r=R[d.doc_id];
+    if(f=="todo"&&r)return false;if(f=="done"&&!r)return false;
+    if(f=="chg"&&!(r&&!r.agree_with_ai))return false;
+    if(f.startsWith("v:")&&(d.label||EMPTY).verdict!=f.slice(2))return false;if(f=="nolab"&&(d.label||r))return false;
+    if(dz&&!lab(d).diseases.split(";").includes(dz))return false;
+    if(q&&!d.text.includes(q))return false;return true;}).map(d=>d.i);
+  if(!keep||!view.includes(cur))cur=view[0]??0;list();render();
+}
+function list(){
+  $("list").innerHTML=view.map(i=>{const d=D[i],l=lab(d),r=R[d.doc_id];
+    return `<div data-i="${i}" class="${i==cur?"cur":""}"><span class="ok">${r?"✓":""}</span><span class="draft-badge" title="Unsaved browser draft">${getDraft(d.doc_id)?"✎":""}</span><span>${i}</span><span class="v-${esc(l.verdict)}">${esc(l.verdict)}</span><span>${esc(l.diseases)}</span></div>`}).join("");
+  $("list").onclick=e=>{const t=e.target.closest("[data-i]");if(t){cur=+t.dataset.i;render();list();}};
+  const n=Object.keys(R).length;$("prog").textContent=`${n}/${D.length} reviewed · ${view.length} shown`;
+}
+function go(s){const k=view.indexOf(cur);const n=view[Math.min(view.length-1,Math.max(0,k+s))];if(n!=null){cur=n;render();list();
+  const el=$("list").querySelector(".cur");el&&el.scrollIntoView({block:"nearest"});}}
+function render(){
+  persistDraft();
+  const d=D[cur];if(!d)return;try{localStorage.setItem(cursorStorageKey||"cur:"+$("pk").textContent,cur)}catch(e){}
+  const l=getDraft(d.doc_id)?.fields||labelFields(lab(d)),ai=d.label||EMPTY,t=d.text;
+  $("row-number").value=String(d.i+1);$("row-number").max=String(D.length);
+  $("meta").textContent=`[row ${d.i+1}/${D.length} · index ${d.i}] ${d.doc_id}`+
+    (d.source!=null?` · source=${d.source}`:"")+(d.lang_label!=null?` · lang_label=${d.lang_label}`:"")+` · ${Array.from(t).length} code points`;
+  if(d.url){const link=document.createElement("a");link.textContent=d.url;link.target="_blank";link.rel="noreferrer";
+    try{const u=new URL(d.url);if(["http:","https:"].includes(u.protocol)){link.href=u.href;$("meta").append(" · ",link);}}catch(e){}}
+  selectionRange=null;$("selection-status").textContent="Click a word, or select a phrase, then mark it.";
+  inventoryRange=null;$("unicode-start").value="";$("unicode-end").value="";$("range-status").textContent="";
+  renderText();renderInventory();renderAudit();renderCandidates();loadInspection(d);
+  $("ai").innerHTML=!d.label?"none":`<b class="v-${esc(ai.verdict)}">${esc(ai.verdict)}</b> · ${esc(ai.read)} · <b>${esc(ai.diseases||"no disease")}</b><br>${esc(ai.evidence)}<br><i>${esc(ai.note)}</i>${ai.hex?"<br>hex: "+esc(ai.hex):""}`;
+  document.querySelectorAll("[name=rd]").forEach(x=>x.checked=x.value==l.read);
+  document.querySelectorAll("[name=vd]").forEach(x=>x.checked=x.value==l.verdict);
+  const ds=l.diseases.split(";");document.querySelectorAll("#codes input").forEach(x=>x.checked=ds.includes(x.value));
+  $("ev").value=l.evidence;$("hx").value=l.hex||"";$("nt").value=l.note||"";
+  formDocument=d;renderDraftStatus();renderCsvPreview();
+  $("st").textContent=R[d.doc_id]?(R[d.doc_id].agree_with_ai?"✓ confirmed starting label":"✓ your label saved"):"not reviewed";
+  $("doc").scrollTop=0;
+}
+function toggleHex(){showHex=!showHex;renderInventory();}
+function inventoryRows(rows,base=0){
+  return rows.map(r=>`${String(base+r.offset).padStart(6)}  ${(r.representation||"").padEnd(10)}  ${r.code_point.padEnd(9)}  ${r.name}  [${r.category}]`).join("\n");
+}
+function showUnicodeRange(){
+  if(inspection?.i!==cur)return;
+  const raw=[$("unicode-start").value,$("unicode-end").value];
+  if(raw.some(v=>!/^\d+$/.test(v)||!Number.isSafeInteger(+v)))return $("range-status").textContent="Enter integer start and end offsets.";
+  const [start,end]=raw.map(Number);
+  if(start>end||end>inspection.length)return $("range-status").textContent=`Use 0 ≤ start ≤ end ≤ ${inspection.length}.`;
+  inventoryRange={start,end};showHex=true;$("range-status").textContent=`Source code points [${start}, ${end}); end excluded.`;renderInventory();
+}
+function renderInventory(){
+  $("scan").hidden=!showHex;$("toggle-hex").setAttribute("aria-expanded",String(showHex));
+  $("toggle-hex").textContent=showHex?"Hide character inventory (h)":"Show all characters (h)";
+  const range=inventoryRange;
+  $("scan").textContent=inspection?.i===cur?
+    `offset  representation  code point  Unicode name  [category] — ${inspection.length} characters; ${range?`range [${range.start}, ${range.end})`:"complete"}\n`+
+    (inventoryRows(range?inspection.characters.slice(range.start,range.end):inspection.characters)||"(empty range/document)"):"Loading inventory…";
+}
+function renderAudit(){
+  if(inspection?.i!==cur){$("audit-result").textContent="Loading audit…";return;}
+  const audit=inspection.audit||{},hidden=audit.hidden_characters||[],mixed=audit.mixed_digits||[];
+  const jump=(start,end)=>`<button type="button" data-start="${start}" data-end="${end}">Jump [${start}, ${end})</button>`;
+  $("audit-result").innerHTML="<h3>Hidden/control/special characters</h3>"+(hidden.length?
+    `<ul>${hidden.map(r=>`<li>${jump(r.offset,r.offset+1)} ${esc(r.code_point)} ${esc(r.name)} [${esc(r.category)}] · ${r.count} occurrence(s), first at ${r.offset}</li>`).join("")}</ul>`:"<p>None found.</p>")+
+    "<h3>Mixed digit scripts</h3>"+(mixed.length?`<ul>${mixed.map(m=>`<li>${jump(m.start,m.end)} ${esc(m.detail)}</li>`).join("")}</ul>`:"<p>No mixed ASCII/Kannada/Devanagari digit tokens found.</p>");
+}
+function renderText(){
+  const d=D[cur];if(!d)return;
+  $("text").className=$("text-mode").value==="markdown"?"markdown":"";
+  if($("text-mode").value==="markdown"){$("text").innerHTML=markdownPreview(d.text);return;}
+  // Original text deliberately has no inserted nodes, markers or highlights:
+  // Indic shaping and the source string's whitespace remain intact.
+  if($("text-mode").value==="original"){$("text").textContent=d.text;return;}
+  if(inspection?.i!==cur){$("text").textContent="Loading character inspection…";return;}
+  const t=d.text,chars=Array.from(t),marks=new Uint8Array(chars.length),offs=new Set();
+  const findingCodes=new Map();
+  if(showFindings)for(const finding of inspection.findings||[]){
+    if(finding.code==="H1")continue;
+    for(const match of finding.matches)for(let k=match.start;k<match.end;k++){
+      if(!findingCodes.has(k))findingCodes.set(k,new Set());findingCodes.get(k).add(finding.code);
+    }
+  }
+  // Quoted evidence searches use UTF-16 indices; map those indices back to
+  // code points before highlighting, including text after astral characters.
+  const pointAtUnit=new Map();let unit=0;
+  chars.forEach((c,k)=>{pointAtUnit.set(unit,k);unit+=c.length;});pointAtUnit.set(unit,chars.length);
+  const ev=(d.label?.evidence||"")+" "+(R[d.doc_id]?.evidence||"")+" "+(formDocument?.doc_id===d.doc_id?$("ev").value:"");
+  for(const m of ev.matchAll(/['‘"“]([^'’"”]{4,80})['’"”]/g)){
+    let p=t.indexOf(m[1]);while(p>=0){const a=pointAtUnit.get(p),b=pointAtUnit.get(p+m[1].length);
+      if(a!==undefined&&b!==undefined)marks.fill(1,a,b);p=t.indexOf(m[1],p+1);}}
+  for(const m of ev.matchAll(/offsets?\s+(\d+)/g))offs.add(+m[1]);
+  const focus=candidateFocus?.i===cur?candidateFocus:null;
+  const detached=new Set((inspection.audit?.g1_candidates||[]).map(m=>m.start));
+  if(focus)marks.fill(1,focus.start,focus.end);
+  let h='<span class="ln">@0</span>',inM=false;
+  chars.forEach((c,k)=>{
+    if(focus?.start===k)h+=`<span class="off" data-candidate-start tabindex="-1" title="candidate offset ${k}">▸</span>`;
+    if(offs.has(k))h+=`<span class="off" title="offset ${k}">▸</span>`;
+    if(marks[k]&&!inM){h+="<mark>";inM=true;}if(!marks[k]&&inM){h+="</mark>";inM=false;}
+    const info=inspection.characters[k],title=`offset ${k} · ${info.code_point} · ${info.name}`;
+    const hits=[...(findingCodes.get(k)||[])];
+    const attrs=`data-off="${k}" title="${esc(title)}${hits.length?" · "+hits.join(", "):""}"`;
+    if(info.marker){const neutral=["\u200c","\u200d"].includes(c)?" neutral":"";
+      h+=`<span class="hid${neutral}" data-off="${k}" title="${esc(title)}${neutral?" · valid Indic character":""}">⟦${esc(info.marker)}⟧</span>`;}
+    else if(detached.has(k)||(/\p{M}/u.test(c)&&(k===0||/\s/u.test(chars[k-1]))))
+      h+=`<span class="hid" data-off="${k}" title="${esc(title)} · possibly detached mark; verify source code points and review G1 in context">◌${esc(c)}</span>`;
+    else h+=`<span ${attrs}${hits.length?' class="hit"':''}>${esc(c)}</span>`;
+    if(c==="\n"||(c==="\r"&&chars[k+1]!=="\n")||["\x85","\u2028","\u2029"].includes(c)){
+      if(inM){h+="</mark>";inM=false;}h+=`\n<span class="ln">@${k+1}</span>`;}
+  });
+  if(inM)h+="</mark>";if(offs.has(chars.length))h+='<span class="off" title="end of document">▸</span>';
+  if(focus?.start===chars.length)h+='<span class="off" data-candidate-start tabindex="-1" title="candidate at end of document">▸</span>';
+  $("text").innerHTML=h;
+}
+function jumpToCandidate(start,end){
+  if(inspection?.i!==cur||!Number.isInteger(start)||!Number.isInteger(end)||start<0||end<start||end>inspection.length)return;
+  candidateFocus={i:cur,start,end};$("text-mode").value="visible";renderText();
+  const target=$("text").querySelector("[data-candidate-start]");
+  target?.scrollIntoView({block:"center"});target?.focus({preventScroll:true});
+}
+function appendC1Evidence(){appendFindingEvidence("C1");}
+function appendNavigationEvidence(){
+  if(inspection?.i!==cur)return;
+  for(const code of ["C1","C5"])appendFindingEvidence(code);
+}
+function appendFindingEvidence(code,matchIndex=null,selectedMatches=null){
+  if(inspection?.i!==cur)return;
+  const finding=(inspection.findings||[]).find(f=>f.code===code);if(!finding&&!selectedMatches)return;
+  const matches=selectedMatches||(matchIndex===null?finding.matches:[finding.matches[matchIndex]]);
+  if(!matches.length||matches.some(m=>!m))return;
+  const box=document.querySelector(`#codes input[value="${code}"]`);if(!box)return alertMsg(`${code} is not available in the loaded disease rules`);
+  const selected=readForm().diseases.split(";");
+  const sensitiveSelected=["F1","E3"].includes(code)||selected.some(c=>["F1","E3"].includes(c));
+  const redact=sensitiveSelected||(inspection.findings||[]).some(f=>["F1","E3"].includes(f.code));
+  const chars=Array.from(D[cur].text);
+  if(selectedMatches&&!["F1","E3"].includes(code)){
+    const placeholders=new Set(matches.filter(m=>!selectionNeedsRedaction(m.start,m.end))
+      .map(m=>`${code}: reader-selected word at offset ${m.start}`));
+    $("ev").value=$("ev").value.split(" | ").filter(entry=>!placeholders.has(entry.trim())).join(" | ");
+  }
+  let omittedValues=false;
+  const entries=matches.map(m=>{
+    // Array.from counts Unicode code points, unlike String.slice offsets.
+    const hideValue=selectedMatches?(["F1","E3"].includes(code)||selectionNeedsRedaction(m.start,m.end)):redact;
+    omittedValues ||= hideValue;
+    let value=selectedMatches&&hideValue?"selected text omitted (possible personal data or secret)":m.detail,suffix="";
+    if(!hideValue&&(selectedMatches||["G1","G2","A6","D4"].includes(code))){
+      value=chars.slice(m.start,m.end).join("");
+    }else if(!hideValue){
+      const end=code==="C2"?Math.min(m.end,m.start+80):m.end;
+      value=JSON.stringify(chars.slice(m.start,end).join("").replace(/[\s\u0085\u001c-\u001f]+/gu," ").trim());
+      if(code==="C2")suffix=` (${end<m.end?"excerpt; ":""}${m.detail})`;
+    }
+    return `${code}: ${value} at offset ${m.start}${suffix}`;
+  }).filter(entry=>!$("ev").value.includes(entry));
+  if(entries.length)$("ev").value+=($("ev").value?" | ":"")+entries.join(" | ");
+  box.checked=true;
+  if(sensitiveSelected)$("hx").value="";
+  if(!["fix","drop"].includes(readForm().verdict))document.querySelectorAll("[name=vd]").forEach(input=>input.checked=input.value==="fix");
+  persistDraft();renderText();
+  $("st").textContent=`${code} and evidence added to your browser draft. Save my label submits it.`+(omittedValues?" Source values omitted.":"")+(sensitiveSelected?" Hex cleared for F1/E3.":"");
+}
+function renderCandidates(){
+  if(inspection?.i!==cur){
+    $("candidate-status").textContent="Loading candidate checks…";$("candidates").innerHTML="";
+    $("checked-codes").textContent="";$("manual-list").innerHTML="";return;
+  }
+  const findings=inspection.findings||[],checked=inspection.checked_codes||[];
+  $("candidate-status").textContent=findings.length?
+    `${findings.length} disease code(s) have candidates. Counts refer to occurrences, not confirmed diseases.`:
+    "No automatic candidates found. Continue full-document and manual checks.";
+  const navigationAction=findings.some(f=>f.code==="C1")&&findings.some(f=>f.code==="C5")?
+    '<button type="button" data-action="append-navigation">Add C1 + C5 evidence</button>':"";
+  $("candidates").innerHTML=navigationAction+findings.map(f=>`<details class="finding"><summary><b>${esc(f.code)}</b> ${esc(C[f.code]||f.summary)} · ${f.count}</summary>
+    <p>${esc(f.summary)} (${esc(f.kind)})</p><p class="caution">${esc(f.caution)}</p>
+    <ul>${f.matches.map((m,index)=>`<li><button type="button" data-start="${m.start}" data-end="${m.end}">Jump [${m.start}, ${m.end})</button>
+    <button type="button" data-action="append-evidence" data-code="${esc(f.code)}" data-match="${index}">Add ${esc(f.code)}</button>
+    ${["G1","G2","A6"].includes(f.code)&&!(inspection.findings||[]).some(x=>["F1","E3"].includes(x.code))?esc(Array.from(D[cur].text).slice(m.start,m.end).join("")):esc(m.detail)}</li>`).join("")}</ul>
+    ${f.related_documents?`<p>Other pack documents: ${f.related_documents.map(d=>`[${d.i}] ${esc(d.doc_id)}`).join(", ")}</p>`:""}
+    <button type="button" data-action="append-evidence" data-code="${f.code}">Append ${f.code} evidence</button><p class="kbd">Adds all occurrences to the draft; use Add ${esc(f.code)} above for one occurrence. An empty or clean verdict becomes fix. No hex is added. F1/E3 use type and offset only.</p></details>`).join("");
+  $("checked-codes").textContent=`Automatic candidate checks: ${checked.join(", ")}. Each still requires your judgment.`;
+  const reasons=new Map((inspection.manual_checks||[]).map(m=>[m.code,m.reason]));
+  const codes=Object.keys(C).length?Object.keys(C):[...reasons.keys()];
+  $("manual-list").innerHTML=codes.filter(code=>!checked.includes(code)||code==="G2").map(code=>
+    `<li><b>${esc(code)} ${esc(C[code]||"")}</b>: ${esc(code==="G2"?"Only reader-supplied loanword forms are checked. Other missing joiners require source comparison or fluent review. Absence of ZWJ/ZWNJ alone proves nothing.":reasons.get(code)||"Manual review required; no automatic check is implemented.")}</li>`).join("");
+}
+async function loadInspection(d){
+  inspectionRequest?.abort();inspectionRequest=new AbortController();const generation=++inspectionGeneration;
+  if(inspection?.i===d.i){renderNormalization();return;}
+  $("normalization-result").textContent="Loading comparison…";
+  try{
+    const response=await fetch(`inspect?i=${d.i}`,{signal:inspectionRequest.signal});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const result=await response.json();if(generation!==inspectionGeneration||cur!==d.i)return;
+    inspection=result;renderText();renderInventory();renderAudit();renderCandidates();renderNormalization();
+  }catch(e){if(e.name==="AbortError"||generation!==inspectionGeneration)return;
+    $("normalization-result").textContent=`Inspection failed (${e.message}). Navigate away and back to retry.`;
+    $("scan").textContent="Character inventory unavailable.";
+    $("audit-result").textContent="Audit unavailable. Manual review is required.";
+    $("candidate-status").textContent="Candidate checks unavailable. Manual review is required.";
+    if($("text-mode").value==="visible")$("text").textContent="Character inspection unavailable. Original text view is still available.";
+  }
+}
+function renderNormalization(){
+  if(inspection?.i!==cur)return;
+  const blocks=[
+    ["NFC — A5 candidates",inspection.nfc,"original","NFC"],
+    ["NFKC — hypothetical preview",inspection.nfkc,"original","NFKC"],
+    ["Compatibility changes beyond NFC",inspection.compatibility,"NFC baseline","NFKC"]
+  ];
+  $("normalization-result").innerHTML=`<p class="kbd">Unicode data version ${esc(inspection.unicode_version)}</p>`+blocks.map(([title,comparison,base,target],index)=>{
+    const diffs=comparison.changes.map(c=>`<details class="diff"><summary>${base} offsets [${c.start}, ${c.end}) → ${target} offsets [${c.normalized_start}, ${c.normalized_end})</summary>
+      <p>Context (${base}):</p><pre>${esc(c.context)}</pre>
+      <p>Before:</p><pre>${esc(c.before_visible)||"(empty)"}\n${esc(inventoryRows(c.before_characters,c.start))}</pre>
+      <p>After:</p><pre>${esc(c.after_visible)||"(empty)"}\n${esc(inventoryRows(c.after_characters,c.normalized_start))}</pre></details>`).join("");
+    return `<h3>${title}</h3><p>${comparison.changed?`${comparison.changes.length} changed range(s); review manually.`:"No change."}</p>${diffs}
+      <details><summary>${target} text preview</summary><pre class="preview" data-preview="${index}"></pre></details>`;
+  }).join("");
+  $("normalization-result").querySelectorAll("[data-preview]").forEach(el=>{
+    el.textContent=blocks[+el.dataset.preview][1].text;
+  });
+}
+async function post(r,submitted=labelFields(r)){
+  persistDraft();
+  try{
+    const response=await fetch("save",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(r)});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const res=await response.json();R[r.doc_id]=r;
+    if(formDocument?.doc_id===r.doc_id)persistDraft();
+    const draft=getDraft(r.doc_id);
+    if(!draft||sameFields(draft.fields,submitted))removeDraft(r.doc_id);
+    const unchanged=formDocument?.doc_id===r.doc_id&&sameFields(readForm(),submitted);
+    if(unchanged){formDocument=null;render();$("st").textContent=`saved (${res.reviewed}/${D.length})`;}
+    else if(formDocument?.doc_id===r.doc_id){renderDraftStatus();$("st").textContent="Label saved; newer edits remain in your browser draft.";}
+    list();return unchanged;
+  }catch(e){
+    if(formDocument?.doc_id===r.doc_id){renderDraftStatus();$("st").textContent=`Save failed (${e.message}); your draft is retained.`;}
+    return false;
+  }
+}
+function confirmAI(){const d=D[cur];if(!d.label)return alertMsg("no starting label: fill the form and press s");post({...d.label,agree_with_ai:true,reviewed_at:new Date().toISOString()}).then(advance=>{if(advance)go(1);});}
+function selectClean(){
+  if(!D[cur])return;
+  document.querySelectorAll("[name=vd]").forEach(input=>input.checked=input.value==="clean");
+  persistDraft();
+  const blocked=readForm().diseases.split(";").some(code=>code&&!["D3","H3"].includes(code));
+  $("st").textContent=blocked?"Clean selected. Remove codes other than D3/H3 before saving.":"Clean selected. Press s to save the label.";
+}
+function saveMine(){const d=D[cur],v=document.querySelector("[name=vd]:checked")?.value,rd=document.querySelector("[name=rd]:checked")?.value||"full";
+  persistDraft();const submitted=readForm();
+  const codes=[...document.querySelectorAll("#codes input:checked")].map(x=>x.value),ds=codes.join(";");
+  if(!v)return alertMsg("pick a verdict");if(v=="clean"&&codes.some(code=>!["D3","H3"].includes(code)))return alertMsg("clean allows only D3 and H3");
+  if(v!="clean"&&!ds)return alertMsg("fix/drop needs at least one disease");
+  const r={doc_id:d.doc_id,read:rd,verdict:v,diseases:ds,evidence:$("ev").value.trim(),hex:$("hx").value.trim(),note:$("nt").value.trim(),reviewed_at:new Date().toISOString()};
+  const a=d.label||EMPTY;r.agree_with_ai=!!d.label&&r.verdict==a.verdict&&r.diseases==a.diseases&&r.evidence==a.evidence&&r.note==a.note&&r.read==a.read;post(r,submitted).then(advance=>{if(advance)go(1);});}
+function alertMsg(m){$("st").textContent="⚠ "+m}
+init();
+</script></body></html>
