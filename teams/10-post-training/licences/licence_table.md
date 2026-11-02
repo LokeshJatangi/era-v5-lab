@@ -41,11 +41,16 @@ Three stages. Sets marked `excluded` stay in the table with the reason and are n
 | sft-code-swe-rebench-openhands | [nebius/SWE-rebench-openhands-trajectories](https://huggingface.co/datasets/nebius/SWE-rebench-openhands-trajectories) | Code (agent trajectories) | Qwen3-Coder-480B-A35B-Instruct (open weights) via OpenHands | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | sft-code-nemotron-cp-v2 | [nvidia/Nemotron-SFT-Competitive-Programming-v2](https://huggingface.co/datasets/nvidia/Nemotron-SFT-Competitive-Programming-v2) | Code (competitive, SQL) | Competitive subset: model not named on the card (NeMo-Skills pipeline; DeepSeek-R1-0528 is cited). Exercism subset: synthetic, model not named. Text-to-SQL: NVIDIA Data Designer, LLM not named | cc-by-4.0, odc-by, mit (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | sft-code-nemotron-swe-v3 | [nvidia/Nemotron-SFT-SWE-v3](https://huggingface.co/datasets/nvidia/Nemotron-SFT-SWE-v3) | Code (agent trajectories) | Not on the card (it names only the OpenHands, SWE-agent and mini-SWE-agent harnesses). NVIDIA's Nemotron 3 Ultra paper names MiniMax-M2.5 and Qwen3-Coder-480B-A35B-Instruct (open weights) for its SWE trajectories; not tied to this set by the card, verify | cc-by-4.0, apache-2.0, mit, bsd-3-clause, bsd-2-clause (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-code-nemotron-cascade-swe | [nvidia/Nemotron-Cascade-SFT-SWE](https://huggingface.co/datasets/nvidia/Nemotron-Cascade-SFT-SWE) | Code (SWE localisation, repair, test generation) | DeepSeek-R1-0528 (open weights) writes every response (the card's `generator` field) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-agentic-nemotron-agentic-v1 | [nvidia/Nemotron-Agentic-v1](https://huggingface.co/datasets/nvidia/Nemotron-Agentic-v1) | English / tool use and conversational agents | Qwen3-235B-A22B-Thinking-2507, Qwen3-235B-A22B-Instruct-2507, Qwen3-32B and GPT-OSS-120B (all open weights) simulate and judge the dialogues | cc-by-4.0 (Hub tag; the card adds apache-2.0 for the Glaive-Function-Calling-v2 part) | TSAI reserves |
+| sft-agentic-nemotron-sft-agentic-v2-tool-calling | [nvidia/Nemotron-SFT-Agentic-v2](https://huggingface.co/datasets/nvidia/Nemotron-SFT-Agentic-v2) (tool-calling part only) | English / tool use | DeepSeek-V3.2 and GLM-4.6 (open weights) simulate and judge | cc-by-4.0, apache-2.0, mit (Hub tags; commercial use permitted per tag) | TSAI reserves |
+| sft-agentic-nemotron-sft-agentic-v2-other | [nvidia/Nemotron-SFT-Agentic-v2](https://huggingface.co/datasets/nvidia/Nemotron-SFT-Agentic-v2) (search and customer-service parts) | English / web search, customer service | Not stated on the card for either part | cc-by-4.0, apache-2.0, mit (Hub tags) | excluded |
 | sft-code-nemotron-terminal | [nvidia/Nemotron-Terminal-Corpus](https://huggingface.co/datasets/nvidia/Nemotron-Terminal-Corpus) | Code (terminal agent) | DeepSeek-V3.2 (open weights) for both the synthetic tasks and the trajectories (paper, arXiv 2602.21193) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | sft-code-opencodereasoning | [nvidia/OpenCodeReasoning](https://huggingface.co/datasets/nvidia/OpenCodeReasoning) | Code (competitive) | DeepSeek-R1 (open weights) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | sft-code-opencodereasoning-2 | [nvidia/OpenCodeReasoning-2](https://huggingface.co/datasets/nvidia/OpenCodeReasoning-2) | Code (competitive) | DeepSeek-R1 for solutions, QwQ for critiques (both open weights) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | sft-code-codeforces-cots | [open-r1/codeforces-cots](https://huggingface.co/datasets/open-r1/codeforces-cots) | Code (competitive) | DeepSeek-R1 (open weights) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
-| sft-indic-aya-collection | [CohereLabs/aya_collection](https://huggingface.co/datasets/CohereLabs/aya_collection) | Multilingual incl. Indic | Templated and translated from existing datasets; no single generator | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-indic-aya-collection | [CohereLabs/aya_collection](https://huggingface.co/datasets/CohereLabs/aya_collection) (12 templated Indic subsets only) | Hindi, Bengali, Tamil, Telugu | None for the text: speaker-written templates applied to existing datasets. The source datasets are not named on the card | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-indic-aya-collection-other | [CohereLabs/aya_collection](https://huggingface.co/datasets/CohereLabs/aya_collection) (all 19 translated datasets and the other templated subsets) | 101 languages | The 19 English datasets are machine-translated with NLLB 3.3B; the card names neither their sources nor any generator | apache-2.0 (Hub tag) | excluded |
 | sft-indic-aya-dataset | [CohereLabs/aya_dataset](https://huggingface.co/datasets/CohereLabs/aya_dataset) | Multilingual incl. Indic | None (human-written) | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | sft-indic-indic-align | [ai4bharat/indic-align](https://huggingface.co/datasets/ai4bharat/indic-align) | 14 Indic languages | Llama-2-70B-Chat for many parts (Llama), plus translated human prompts; Mistral-7B in some parts | cc-by-4.0 (Hub tag; commercial use permitted per tag) | excluded |
 | sft-indic-samvaad-hi | [sarvamai/samvaad-hi-v1](https://huggingface.co/datasets/sarvamai/samvaad-hi-v1) | Hindi, English, Hinglish | Not stated on the card or in Sarvam's announcement; unknown | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
@@ -58,7 +63,7 @@ Three stages. Sets marked `excluded` stay in the table with the reason and are n
 | sft-math-openmathinstruct-2 | [nvidia/OpenMathInstruct-2](https://huggingface.co/datasets/nvidia/OpenMathInstruct-2) | English / Mathematics | Llama-3.1-405B-Instruct (Llama) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | excluded |
 | sft-rl-math-openmathreasoning | [nvidia/OpenMathReasoning](https://huggingface.co/datasets/nvidia/OpenMathReasoning) | English / Mathematics | DeepSeek-R1 and QwQ-32B (open weights) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | sft-math-openr1-math | [open-r1/OpenR1-Math-220k](https://huggingface.co/datasets/open-r1/OpenR1-Math-220k) | English / Mathematics | DeepSeek-R1 (open weights) | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
-| sft-math-numinamath-1.5 | [project-numina/NuminaMath-1.5](https://huggingface.co/datasets/project-numina/NuminaMath-1.5) | English / Mathematics | Mixed; solutions from the source datasets, no single generator stated | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-math-numinamath-1.5 | [project-numina/NuminaMath-1.5](https://huggingface.co/datasets/project-numina/NuminaMath-1.5) | English / Mathematics | Not stated. Three of its sources are model-written sets (orca_math, synthetic_math, metamath: 311,660 of 896,215 problems); the card of orca_math names GPT-4 Turbo (OpenAI, closed), and the older sources carry over solutions from NuminaMath-CoT | apache-2.0 (Hub tag; commercial use permitted per tag) | excluded |
 | sft-math-numinamath-cot | [project-numina/NuminaMath-CoT](https://huggingface.co/datasets/project-numina/NuminaMath-CoT) | English / Mathematics | GPT-4 (OpenAI, closed) rewrote solutions into chain-of-thought; GPT-4o was used for the tool-integrated set (secondary sources, not on the card; verify) | apache-2.0 (Hub tag; commercial use permitted per tag) | excluded |
 | sft-stem-code-nemotron-post-v1 | [nvidia/Nemotron-Post-Training-Dataset-v1](https://huggingface.co/datasets/nvidia/Nemotron-Post-Training-Dataset-v1) | English / Math, STEM, Code | DeepSeek-R1-0528 and Qwen3-235B-A22B (open weights); Llama-3.3-Nemotron-Super is the model it was built to train | cc-by-4.0 (Hub tag; commercial use permitted per tag) | excluded |
 | sft-stem-code-nemotron-post-v2 | [nvidia/Nemotron-Post-Training-Dataset-v2](https://huggingface.co/datasets/nvidia/Nemotron-Post-Training-Dataset-v2) | Multilingual / Math, STEM, Code | DeepSeek-R1-0528, Qwen3-235B-A22B, Qwen3-30B-A3B (open weights), Qwen2.5-14B-Instruct and Qwen2.5-32B-Instruct-AWQ; the card does not map models to subsets (read from the Hub page, not the gated files) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | excluded |
@@ -227,7 +232,7 @@ Three stages. Sets marked `excluded` stay in the table with the reason and are n
 
 Chat-formatted dialogues, reasoning traces and tool or agent trajectories for coding, Indic languages, math and science. Each entry has the standard fields, `TSAI reserves` as the decision (`excluded` where TSAI ruled a set out), and one line of opinion. Licence values are the Hugging Face tags read on 29 Oct 2026; a tag is not legal clearance. Per-dataset notes, 20-row samples and a benchmark-overlap check are in [team10-datasets](https://github.com/RaviNaik/ERA/tree/main/v5/capstone/team10-datasets).
 
-Eleven sets in the two stage sections are `excluded` (six named by TSAI, and five more where a closed OpenAI or Llama model made part of the data: `sft-code-magicoder-oss`, `sft-indic-indic-align`, `sft-math-numinamath-cot`, `sft-rl-code-rstar-coder`, `rl-math-big-math`), and two CC-BY-SA sets (`sft-math-nemotron-proofs`, `sft-math-nemotron-math-v2`) are `allowed (CC-BY-SA, attribution needed)` after TSAI's update that CC-BY-SA data is allowed with attribution. `rl-code-deepcoder` and `sft-science-nemotron-science` go to G9 (Evaluation) for a decontamination test before any use.
+Twenty-three sets in the two stage sections are `excluded`: eleven earlier ones (six named by TSAI, and five more where a closed OpenAI or Llama model made part of the data: `sft-code-magicoder-oss`, `sft-indic-indic-align`, `sft-math-numinamath-cot`, `sft-rl-code-rstar-coder`, `rl-math-big-math`), nine added on 1 Nov for closed-model, Llama or custom-licence reasons, and three added in the 2 Nov review (`sft-math-numinamath-1.5`, `sft-agentic-nemotron-sft-agentic-v2-other`, `sft-indic-aya-collection-other`). Two CC-BY-SA sets (`sft-math-nemotron-proofs`, `sft-math-nemotron-math-v2`) are `allowed (CC-BY-SA, attribution needed)` after TSAI's update that CC-BY-SA data is allowed with attribution. `rl-code-deepcoder` and `sft-science-nemotron-science` go to G9 (Evaluation) for a decontamination test before any use.
 
 ### `sft-code-commitpackft` — commitpackft
 
@@ -313,6 +318,50 @@ Eleven sets in the two stage sections are `excluded` (six named by TSAI, and fiv
 - **Our opinion:** use, check. Per-subset licences (CC-BY-4.0, ODC-By, MIT). The Exercism subset is decontaminated against Aider.
 - **Details and 20-row sample:** [nvidia__Nemotron-SFT-Competitive-Programming-v2](https://github.com/RaviNaik/ERA/tree/main/v5/capstone/team10-datasets/nvidia__Nemotron-SFT-Competitive-Programming-v2)
 
+### `sft-code-nemotron-cascade-swe` — Nemotron-Cascade-SFT-SWE
+
+- **Stage:** SFT
+- **Set:** `sft-code-nemotron-cascade-swe`
+- **Language:** Code (SWE localisation, repair, test generation)
+- **Source:** [`nvidia/Nemotron-Cascade-SFT-SWE`](https://huggingface.co/datasets/nvidia/Nemotron-Cascade-SFT-SWE)
+- **Licence:** `cc-by-4.0` — Hugging Face tag and card read on 2 Nov 2026. A tag is not legal clearance.
+- **Generator model:** DeepSeek-R1-0528 (open weights) writes every response; the card has a `generator` field per row. Prompts come from SWE-Bench-Train, SWE-reBench, SWE-Smith, R2E-Gym-Subset and SWE-Fixer-Train.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use, check. Open-weight generator and a permissive licence, so it passes the Week 2 rule. The prompts follow the "agentless mini" framework (localise the bug, repair it, write a test), so these are single-turn tasks, not action and observation trajectories. The card removes repositories that appear in SWE-bench Verified, nothing else, so the Team 9 decontamination test is still needed (Live, Pro, Terminal-Bench). It shares SWE-reBench issues with `sft-code-swe-rebench-openhands`: de-duplicate by instance id. The licences of the five source sets are not checked.
+
+### `sft-agentic-nemotron-agentic-v1` — Nemotron-Agentic-v1
+
+- **Stage:** SFT
+- **Set:** `sft-agentic-nemotron-agentic-v1`
+- **Language:** English / tool use and conversational agents
+- **Source:** [`nvidia/Nemotron-Agentic-v1`](https://huggingface.co/datasets/nvidia/Nemotron-Agentic-v1)
+- **Licence:** `cc-by-4.0` — Hugging Face tag and card read on 2 Nov 2026. The card adds `apache-2.0` for the Glaive-Function-Calling-v2 part. Attribution is needed.
+- **Generator model:** Qwen3-235B-A22B-Thinking-2507, Qwen3-235B-A22B-Instruct-2507, Qwen3-32B and GPT-OSS-120B, all open weights, simulate the user, agent and tool roles and also judge the result. The user personas come from `nvidia/Nemotron-Personas-USA`.
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use. Every named model is open weights, so it passes the Week 2 rule. 335,122 samples (19,028 interactive agent, 316,094 tool calling). The tool sets come from public datasets that the card does not name (except Glaive v2), so their licences are unchecked.
+
+### `sft-agentic-nemotron-sft-agentic-v2-tool-calling` — Nemotron-SFT-Agentic-v2, tool-calling part
+
+- **Stage:** SFT
+- **Set:** `sft-agentic-nemotron-sft-agentic-v2-tool-calling`
+- **Language:** English / tool use
+- **Source:** [`nvidia/Nemotron-SFT-Agentic-v2`](https://huggingface.co/datasets/nvidia/Nemotron-SFT-Agentic-v2), the tool-calling part only
+- **Licence:** `cc-by-4.0, apache-2.0, mit` — Hugging Face tags and card read on 2 Nov 2026. A tag is not legal clearance.
+- **Generator model:** DeepSeek-V3.2 and GLM-4.6 (open weights) simulate the dialogues and judge them. The seeds are tool sets from UltraTool, ToolEyes, AutoTools, API-Bank and Glaive v2, plus a sample of `Agent-Ark/Toucan-1.5M` (apache-2.0; its card names Qwen3-32B, Kimi-K2 and GPT-OSS-120B, all open weights).
+- **Decision:** `TSAI reserves`
+- **Our opinion:** use this part only. Only this part names its generator. The card's text says about 1.2M trajectories but its table says 707,052: count the rows before sizing the mix. The licences of the seed tool sets are unchecked.
+
+### `sft-agentic-nemotron-sft-agentic-v2-other` — Nemotron-SFT-Agentic-v2, search and customer-service parts
+
+- **Stage:** SFT
+- **Set:** `sft-agentic-nemotron-sft-agentic-v2-other`
+- **Language:** English / web search, customer service
+- **Source:** [`nvidia/Nemotron-SFT-Agentic-v2`](https://huggingface.co/datasets/nvidia/Nemotron-SFT-Agentic-v2), the search part (about 7,000 trajectories) and the customer-service part (278,880 conversations)
+- **Licence:** `cc-by-4.0, apache-2.0, mit` — Hugging Face tags read on 2 Nov 2026.
+- **Generator model:** Not stated. The card says the search questions were written by "an LLM" and the answers by "a model equipped with a web-search tool", and it names no model for the customer-service part.
+- **Decision:** `excluded` — TSAI Week 2 rule: sources we cannot trace are out, and we cannot show that no closed model wrote them.
+- **Our opinion:** excluded until NVIDIA names the generator models. Check the real split names after loading: the card's file list and its text do not match.
+
 ### `sft-code-nemotron-swe-v3` — Nemotron-SFT-SWE-v3
 
 - **Stage:** SFT
@@ -373,17 +422,28 @@ Eleven sets in the two stage sections are `excluded` (six named by TSAI, and fiv
 - **Our opinion:** use, check. R1 traces on Codeforces problems. Use the `_decontaminated` configs.
 - **Details and 20-row sample:** [open-r1__codeforces-cots](https://github.com/RaviNaik/ERA/tree/main/v5/capstone/team10-datasets/open-r1__codeforces-cots)
 
-### `sft-indic-aya-collection` — aya_collection
+### `sft-indic-aya-collection` — aya_collection, 12 templated Indic subsets
 
 - **Stage:** SFT
 - **Set:** `sft-indic-aya-collection`
-- **Language:** Multilingual incl. Indic
-- **Source:** [`CohereLabs/aya_collection`](https://huggingface.co/datasets/CohereLabs/aya_collection)
-- **Licence:** `apache-2.0` — Hugging Face tag read on 29 Oct 2026. A tag is not legal clearance.
-- **Generator model:** Templated and translated from existing datasets; no single generator
+- **Language:** Hindi, Bengali, Tamil, Telugu
+- **Source:** [`CohereLabs/aya_collection`](https://huggingface.co/datasets/CohereLabs/aya_collection), only these subsets: `templated_bengali_news`, `templated_hindi_headline`, `templated_hindi_news`, `templated_indic_paraphrase`, `templated_indic_sentiment`, `templated_tamil_stories`, `templated_tamil_thirukkural`, `templated_telugu_food`, `templated_telugu_jokes`, `templated_telugu_news`, `templated_telugu_poems`, `templated_telugu_riddles`
+- **Licence:** `apache-2.0` — Hugging Face tag and card read on 2 Nov 2026. The card says it aims to include only permissive datasets; it does not list the licence of each of the 44 source datasets. A tag is not legal clearance.
+- **Generator model:** None for the text. In these subsets, templates written by fluent speakers are applied to existing datasets (news, headlines, sentiment, paraphrase, jokes, poems, riddles, stories, couplets); no model writes the answers. The source datasets are not named on the card.
 - **Decision:** `TSAI reserves`
-- **Our opinion:** use, check. Templated tasks; the card does not state the source sets or model terms, and sub-dataset licences are unchecked.
+- **Our opinion:** use only these 12 subsets, and only after the source dataset, licence and origin of each one are written in this section (a rotation task). They are task-style data (classification, headline writing), not open instructions, and cover only four of the ten scripts: expect less usable text than the mix proposal's 5% assumes, and fill the gap from `aya_dataset`.
 - **Details and 20-row sample:** [CohereLabs__aya_collection](https://github.com/RaviNaik/ERA/tree/main/v5/capstone/team10-datasets/CohereLabs__aya_collection)
+
+### `sft-indic-aya-collection-other` — aya_collection, translated datasets and other subsets
+
+- **Stage:** SFT
+- **Set:** `sft-indic-aya-collection-other`
+- **Language:** 101 languages
+- **Source:** [`CohereLabs/aya_collection`](https://huggingface.co/datasets/CohereLabs/aya_collection): the 19 `translated_*` datasets and every templated subset not listed above
+- **Licence:** `apache-2.0` — Hugging Face tag read on 2 Nov 2026.
+- **Generator model:** The 19 datasets are English sets machine-translated with NLLB 3.3B (card). The card does not list the English sources or who wrote them. At least one is model-written: `soda`, whose card says the dialogues are distilled from InstructGPT (OpenAI, closed).
+- **Decision:** `excluded` — TSAI Week 2 rule: text made by closed OpenAI models is out, and sources we cannot trace are out.
+- **Our opinion:** excluded. Open question for TSAI: the card of `facebook/nllb-200-3.3B` gives the model licence as `cc-by-nc-4.0`. Whether translations made with it carry that restriction is not for us to decide. The other templated subsets (not Indic) are out of scope.
 
 ### `sft-indic-aya-dataset` — aya_dataset
 
@@ -535,10 +595,10 @@ Eleven sets in the two stage sections are `excluded` (six named by TSAI, and fiv
 - **Set:** `sft-math-numinamath-1.5`
 - **Language:** English / Mathematics
 - **Source:** [`project-numina/NuminaMath-1.5`](https://huggingface.co/datasets/project-numina/NuminaMath-1.5)
-- **Licence:** `apache-2.0` — Hugging Face tag read on 29 Oct 2026. A tag is not legal clearance.
-- **Generator model:** Mixed; solutions from the source datasets, no single generator stated
-- **Decision:** `TSAI reserves`
-- **Our opinion:** use, check. Sources include amc_aime and olympiads with no decontamination stated; web-scraped problem text may not be covered by the dataset licence.
+- **Licence:** `apache-2.0` — Hugging Face tag and card read on 2 Nov 2026. A tag is not legal clearance.
+- **Generator model:** Not stated on the card. Its source table includes `orca_math` (151,934 problems), `synthetic_math` (148,712) and `metamath` (11,014): 311,660 of 896,215 problems, all model-written sets. The card of `microsoft/orca-math-word-problems-200k` says its questions and answers were made with Azure GPT-4 Turbo (OpenAI, closed). The cards of the other two name no model (MetaMathQA says only that it is augmented from GSM8K and MATH). The card calls itself the second iteration of NuminaMath-CoT and only removes `synthetic_amc`, so the older sources probably keep the NuminaMath-CoT solutions that we record as GPT-4 rewritten.
+- **Decision:** `excluded` — TSAI Week 2 rule: text made by closed OpenAI models is out (`orca_math` is GPT-4 Turbo), and sources we cannot trace are out.
+- **Our opinion:** excluded for the same reason as `sft-math-numinamath-cot`. A subset that keeps only the manually parsed sources (`olympiads_ref`, `amc_aime`, `cn_contest`, `inequalities`, `number_theory`) could be reconsidered if TSAI accepts that those solutions are human-written. Not assumed here.
 - **Details and 20-row sample:** [project-numina__NuminaMath-1.5](https://github.com/RaviNaik/ERA/tree/main/v5/capstone/team10-datasets/project-numina__NuminaMath-1.5)
 
 ### `sft-math-numinamath-cot` — NuminaMath-CoT
@@ -932,11 +992,11 @@ For Team 11's public model card, datasheet, and release compliance ledger:
 
 1. **Permissive & Attribution-Required Post-Training Sets (`TSAI reserves`):**
    - **MIT:** `bigcode/commitpackft`, `SWE-Gym/SWE-Gym`, `agentica-org/DeepCoder-Preview-Dataset`, `zwhe99/DeepMath-103K`, `BodduSriPavan111/chandassu`.
-   - **Apache-2.0:** `CohereLabs/aya_collection`, `CohereLabs/aya_dataset`, `open-r1/OpenR1-Math-220k`, `project-numina/NuminaMath-1.5`, `open-thoughts/OpenThoughts3-1.2M`, `bespokelabs/Bespoke-Stratos-17k`, `R2E-Gym/R2E-Gym-Subset`, `BytedTsinghua-SIA/DAPO-Math-17k`, `argilla/distilabel-math-dpo`, `HuggingFaceH4/Code-Feedback`.
-   - **CC-BY-4.0 (Attribution required in release model card):** `nebius/SWE-rebench-openhands-trajectories`, `nvidia/Nemotron-Terminal-Corpus`, `nvidia/OpenCodeReasoning`, `nvidia/OpenCodeReasoning-2`, `open-r1/codeforces-cots`, `nvidia/OpenMathReasoning`, `nvidia/Nemotron-Science-v1`, `Salesforce/xlam-function-calling-60k`, `nebius/SWE-rebench-V2`, `open-r1/codeforces`, `nvidia/HelpSteer2`, `ai4bharat/sangraha`, `ai4bharat/IndicCorpV2`.
+   - **Apache-2.0:** `CohereLabs/aya_collection` (12 templated Indic subsets only), `CohereLabs/aya_dataset`, `open-r1/OpenR1-Math-220k`, `open-thoughts/OpenThoughts3-1.2M`, `bespokelabs/Bespoke-Stratos-17k`, `R2E-Gym/R2E-Gym-Subset`, `BytedTsinghua-SIA/DAPO-Math-17k`, `argilla/distilabel-math-dpo`, `HuggingFaceH4/Code-Feedback`.
+   - **CC-BY-4.0 (Attribution required in release model card):** `nebius/SWE-rebench-openhands-trajectories`, `nvidia/Nemotron-Terminal-Corpus`, `nvidia/OpenCodeReasoning`, `nvidia/OpenCodeReasoning-2`, `open-r1/codeforces-cots`, `nvidia/OpenMathReasoning`, `nvidia/Nemotron-Science-v1`, `Salesforce/xlam-function-calling-60k`, `nvidia/Nemotron-Cascade-SFT-SWE`, `nvidia/Nemotron-Agentic-v1`, `nvidia/Nemotron-SFT-Agentic-v2` (tool-calling part only), `nebius/SWE-rebench-V2`, `open-r1/codeforces`, `nvidia/HelpSteer2`, `ai4bharat/sangraha`, `ai4bharat/IndicCorpV2`.
    - **ODC-By v1.0 (Attribution required in release model card):** `bigcode/self-oss-instruct-sc2-exec-filter-50k`, `HuggingFaceFW/fineweb-2` (`ind-mr-fw2`, `ind-kn-fw2`), `allenai/wildguardmix`.
 2. **Share-Alike Sets (`allowed (CC-BY-SA, attribution needed)`):**
    - `nvidia/Nemotron-Math-Proofs-v1` (`cc-by-sa-4.0`, generator: `gpt-oss-120b` + `Goedel-Prover-V2-32B`), `nvidia/Nemotron-Math-v2` (`cc-by-4.0, cc-by-sa-4.0`, generator: `gpt-oss-120b`), and `databricks/databricks-dolly-15k` (`cc-by-sa-4.0`, human-authored). Carry source URLs, licence links, and attribution notices in the release datasheet.
 3. **Strict Generator & Licence Exclusions (`excluded` — zero rows enter training):**
-   - All datasets generated, rewritten, or ranked by closed models (`GPT-3.5`, `GPT-4`, `GPT-4o`, `Claude 3.5/3.7 Sonnet`, `Gemini`) or `Llama` models (`Llama-2`, `Llama-3.1`, `Llama-3.3`), and all non-commercial (`CC-BY-NC-*`) or custom-agreement datasets, are explicitly recorded as `excluded` above and blocked from `sft/convert.py`.
+   - All datasets generated, rewritten, or ranked by closed models (`GPT-3.5`, `GPT-4`, `GPT-4o`, `Claude 3.5/3.7 Sonnet`, `Gemini`) or `Llama` models (`Llama-2`, `Llama-3.1`, `Llama-3.3`), and all non-commercial (`CC-BY-NC-*`) or custom-agreement datasets, are explicitly recorded as `excluded` above and blocked from `sft/convert.py`. Added on 2 Nov: `project-numina/NuminaMath-1.5` (model-written sources, generator not stated), the search and customer-service parts of `nvidia/Nemotron-SFT-Agentic-v2` (generator not stated), and the 19 translated datasets and other subsets of `CohereLabs/aya_collection` (English sources untraced, at least one distilled from InstructGPT).
 
