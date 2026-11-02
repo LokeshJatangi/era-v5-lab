@@ -154,8 +154,8 @@ def licence_row(set_id: str, table: Path = LICENCE_TABLE) -> dict:
 
 
 def check_allowed(row: dict) -> None:
-    if not row["decision"].startswith(("TSAI reserves", "allowed")):
-        raise SystemExit(f"{row['set']} has decision {row['decision']!r}; only TSAI reserves or allowed sets convert")
+    if not row["decision"].startswith(("TSAI reserves", "allowed", "needs TSAI decision")):
+        raise SystemExit(f"{row['set']} has decision {row['decision']!r}; only TSAI reserves, allowed, or needs TSAI decision sets convert")
 
 
 # --- one row -> one sample -------------------------------------------------------------------

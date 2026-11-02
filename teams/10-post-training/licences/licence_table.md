@@ -34,7 +34,7 @@ Three stages. Sets marked `excluded` stay in the table with the reason and are n
 | Set | Source | Language | Generator model | Licence | Decision |
 | --- | --- | --- | --- | --- | --- |
 | sft-code-commitpackft | [bigcode/commitpackft](https://huggingface.co/datasets/bigcode/commitpackft) | Code (350+ languages) | none (real GitHub commits) | mit (Hub tag; commercial use permitted per tag) | TSAI reserves |
-| sft-code-self-oss-instruct | [bigcode/self-oss-instruct-sc2-exec-filter-50k](https://huggingface.co/datasets/bigcode/self-oss-instruct-sc2-exec-filter-50k) | Code (Python) | The base model itself generates instructions, responses and tests in the SelfCodeAlign method (arXiv 2410.24198); StarCoder2-Instruct used StarCoder2-15B (from memory, the card is empty; verify) | odc-by (Hub tag; commercial use permitted per tag) | TSAI reserves |
+| sft-code-self-oss-instruct | [bigcode/self-oss-instruct-sc2-exec-filter-50k](https://huggingface.co/datasets/bigcode/self-oss-instruct-sc2-exec-filter-50k) | Code (Python) | StarCoder2-15B via SelfCodeAlign (arXiv 2410.24198); StarCoder2 has the BigCode OpenRAIL-M licence, which has use restrictions and is not one of the permissive licences in the lab rule | odc-by (Hub tag on dataset; generator model is BigCode OpenRAIL-M) | needs TSAI decision |
 | sft-code-magicoder-oss | [ise-uiuc/Magicoder-OSS-Instruct-75K](https://huggingface.co/datasets/ise-uiuc/Magicoder-OSS-Instruct-75K) | Code (polyglot) | GPT-3.5 (OpenAI, closed) | mit (Hub tag; commercial use permitted per tag) | excluded |
 | sft-code-codefeedback | [m-a-p/CodeFeedback-Filtered-Instruction](https://huggingface.co/datasets/m-a-p/CodeFeedback-Filtered-Instruction) | Code (polyglot) | Mixed upstream sets (Magicoder, Evol-Instruct code); Qwen-72B-Chat used only as a filter | apache-2.0 (Hub tag; commercial use permitted per tag) | TSAI reserves |
 | sft-rl-code-rstar-coder | [microsoft/rStar-Coder](https://huggingface.co/datasets/microsoft/rStar-Coder) | Code (competitive) | GPT-4o (OpenAI, closed) for problem synthesis and test-input generators; QwQ-32B (open weights) for the long-reasoning solutions (paper, arXiv 2505.21297) | cc-by-4.0 (Hub tag; commercial use permitted per tag) | excluded |
@@ -252,10 +252,10 @@ Twenty-three sets in the two stage sections are `excluded`: eleven earlier ones 
 - **Set:** `sft-code-self-oss-instruct`
 - **Language:** Code (Python)
 - **Source:** [`bigcode/self-oss-instruct-sc2-exec-filter-50k`](https://huggingface.co/datasets/bigcode/self-oss-instruct-sc2-exec-filter-50k)
-- **Licence:** `odc-by` — Hugging Face tag read on 29 Oct 2026. A tag is not legal clearance.
-- **Generator model:** The base model itself generates instructions, responses and tests in the SelfCodeAlign method (arXiv 2410.24198); StarCoder2-Instruct used StarCoder2-15B (from memory, the card is empty; verify)
-- **Decision:** `TSAI reserves`
-- **Our opinion:** use. Self-generated and execution-filtered. ODC-By needs attribution.
+- **Licence:** `odc-by` on the dataset card; generator model (`StarCoder2-15B`) is under the **BigCode OpenRAIL-M** licence, which has use restrictions and is not one of the permissive licences in the lab rule.
+- **Generator model:** `StarCoder2-15B` generates instructions, responses and tests in the SelfCodeAlign method (arXiv 2410.24198).
+- **Decision:** `needs TSAI decision` — StarCoder2 has the BigCode OpenRAIL-M licence (use restrictions, not one of the permissive licences in the lab rule).
+- **Our opinion:** needs TSAI decision at Gate 2 due to BigCode OpenRAIL-M use restrictions on StarCoder2 output.
 - **Details and 20-row sample:** [bigcode__self-oss-instruct-sc2-exec-filter-50k](https://github.com/RaviNaik/ERA/tree/main/v5/capstone/team10-datasets/bigcode__self-oss-instruct-sc2-exec-filter-50k)
 
 ### `sft-code-magicoder-oss` — Magicoder-OSS-Instruct-75K
@@ -994,9 +994,12 @@ For Team 11's public model card, datasheet, and release compliance ledger:
    - **MIT:** `bigcode/commitpackft`, `SWE-Gym/SWE-Gym`, `agentica-org/DeepCoder-Preview-Dataset`, `zwhe99/DeepMath-103K`, `BodduSriPavan111/chandassu`.
    - **Apache-2.0:** `CohereLabs/aya_collection` (12 templated Indic subsets only), `CohereLabs/aya_dataset`, `open-r1/OpenR1-Math-220k`, `open-thoughts/OpenThoughts3-1.2M`, `bespokelabs/Bespoke-Stratos-17k`, `R2E-Gym/R2E-Gym-Subset`, `BytedTsinghua-SIA/DAPO-Math-17k`, `argilla/distilabel-math-dpo`, `HuggingFaceH4/Code-Feedback`.
    - **CC-BY-4.0 (Attribution required in release model card):** `nebius/SWE-rebench-openhands-trajectories`, `nvidia/Nemotron-Terminal-Corpus`, `nvidia/OpenCodeReasoning`, `nvidia/OpenCodeReasoning-2`, `open-r1/codeforces-cots`, `nvidia/OpenMathReasoning`, `nvidia/Nemotron-Science-v1`, `Salesforce/xlam-function-calling-60k`, `nvidia/Nemotron-Cascade-SFT-SWE`, `nvidia/Nemotron-Agentic-v1`, `nvidia/Nemotron-SFT-Agentic-v2` (tool-calling part only), `nebius/SWE-rebench-V2`, `open-r1/codeforces`, `nvidia/HelpSteer2`, `ai4bharat/sangraha`, `ai4bharat/IndicCorpV2`.
-   - **ODC-By v1.0 (Attribution required in release model card):** `bigcode/self-oss-instruct-sc2-exec-filter-50k`, `HuggingFaceFW/fineweb-2` (`ind-mr-fw2`, `ind-kn-fw2`), `allenai/wildguardmix`.
-2. **Share-Alike Sets (`allowed (CC-BY-SA, attribution needed)`):**
+   - **ODC-By v1.0 (Attribution required in release model card):** `HuggingFaceFW/fineweb-2` (`ind-mr-fw2`, `ind-kn-fw2`), `allenai/wildguardmix`.
+   - **Open-weight generator note for Gate 2:** The lab rule names `gpt-oss` as the allowed model generator and excludes closed models and Llama. Sets above that use other open-weight generators (`DeepSeek-R1`, `DeepSeek-V3.2`, `Qwen3-Coder`, `QwQ`, `Mixtral`, `Goedel-Prover`) have their exact generator model recorded in the table so TSAI can decide set by set at Gate 2.
+2. **Sets Marked `needs TSAI decision`:**
+   - `bigcode/self-oss-instruct-sc2-exec-filter-50k` (`sft-code-self-oss-instruct`): Dataset tag is `ODC-By`, but the generator model (`StarCoder2-15B`) has the **BigCode OpenRAIL-M** licence, which has use restrictions and is not one of the permissive licences in the lab rule.
+3. **Share-Alike Sets (`allowed (CC-BY-SA, attribution needed)`):**
    - `nvidia/Nemotron-Math-Proofs-v1` (`cc-by-sa-4.0`, generator: `gpt-oss-120b` + `Goedel-Prover-V2-32B`), `nvidia/Nemotron-Math-v2` (`cc-by-4.0, cc-by-sa-4.0`, generator: `gpt-oss-120b`), and `databricks/databricks-dolly-15k` (`cc-by-sa-4.0`, human-authored). Carry source URLs, licence links, and attribution notices in the release datasheet.
-3. **Strict Generator & Licence Exclusions (`excluded` — zero rows enter training):**
+4. **Strict Generator & Licence Exclusions (`excluded` — zero rows enter training):**
    - All datasets generated, rewritten, or ranked by closed models (`GPT-3.5`, `GPT-4`, `GPT-4o`, `Claude 3.5/3.7 Sonnet`, `Gemini`) or `Llama` models (`Llama-2`, `Llama-3.1`, `Llama-3.3`), and all non-commercial (`CC-BY-NC-*`) or custom-agreement datasets, are explicitly recorded as `excluded` above and blocked from `sft/convert.py`. Added on 2 Nov: `project-numina/NuminaMath-1.5` (model-written sources, generator not stated), the search and customer-service parts of `nvidia/Nemotron-SFT-Agentic-v2` (generator not stated), and the 19 translated datasets and other subsets of `CohereLabs/aya_collection` (English sources untraced, at least one distilled from InstructGPT).
 

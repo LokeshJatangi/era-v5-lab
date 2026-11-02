@@ -144,7 +144,7 @@ def test_manifest_reads_licence_table_and_hash_is_stable():
     b_lines, b = convert.convert("sft-code-self-oss-instruct", [SELF_OSS, SELF_OSS], None, None)
     assert a_lines == b_lines and a["content_sha256"] == b["content_sha256"]
     assert a["source"] == "bigcode/self-oss-instruct-sc2-exec-filter-50k"
-    assert a["licence"].startswith("odc-by") and a["decision"] == "TSAI reserves"
+    assert a["licence"].startswith("odc-by") and a["decision"] == "needs TSAI decision"
     assert "StarCoder2" in a["generator_model"]
     assert a["rows"] == 2 and a["effort"] == {"1k": 2, "4k": 0, "16k": 0, "64k": 0}
     assert "estimate" in a["effort_counter"]

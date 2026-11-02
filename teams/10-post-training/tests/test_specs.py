@@ -56,7 +56,7 @@ def test_licence_table_has_decision_and_tsai_reserves():
     assert "BodduSriPavan111/chandassu" in licence
     assert "MIT" in licence
     assert decisions and all(
-        d in {"TSAI reserves", "excluded"} or d.startswith("allowed") for d in decisions
+        d in {"TSAI reserves", "excluded", "needs TSAI decision"} or d.startswith("allowed") for d in decisions
     )
 
 
