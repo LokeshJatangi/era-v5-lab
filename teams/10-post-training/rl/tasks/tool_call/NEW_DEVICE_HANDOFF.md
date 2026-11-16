@@ -104,7 +104,7 @@ Do not use an unfiltered whole-branch run as a release gate while v2 is absent.
 
 - Main suite before test-file separation: 39 passed, 115 deselected, 0.43 s.
   Same function bodies were moved into the current main files; the final file
-  layout has not been rerun in this session.
+  layout subsequently passed all 39 cases; see the validation update below.
 - Shared reward self-check: correct 1.0, incorrect 0.0; 2 checked, 0 wrong.
 - SFT scorer suite: 158 passed.
 - Existing reward regression: 14 passed, 6 skipped; skip reasons unavailable.
@@ -128,6 +128,33 @@ and are not transferred or needed for this task. No dataset rows are committed.
 DM_CALL_HANDOFF.md is a separate proposed experiment, with no measured result.
 TOOL_CALL_TEST_PLAN.md distinguishes tested behavior from proposed coverage.
 Do not resume these extensions without an explicit scope change. README is
-unchanged. No PR or team-group message has been sent. No subagents were used.
+unchanged. PR #109 is open against the team Week 3 branch; no team-group message has been sent. No subagents were used.
 Unrelated local research notes, images, .gitignore and docs/session-notes existed
 outside this work and are intentionally not included in the checkpoint.
+
+## Final validation update — 17 November 2026
+
+This update supersedes earlier pending-rerun and unavailable-skip-reason notes.
+Complete terminal output supplied by the user confirms the final core filenames:
+
+- Focused verifier/hardening/decoder suite: **39 passed, 50 deselected in 0.39 s**.
+- Reward self-check: correct completion **1.0**, incorrect completion **0.0**;
+  **2 checked, 0 wrong**.
+- Combined shared reward/SFT suite: **172 passed, 6 skipped in 0.98 s**
+  (14 reward cases and 158 SFT scorer cases passed).
+- Skips: one Go check requires Docker or `g10-go-rl:1`; four code-pool checks
+  require Docker or `python:3.12-slim`; one SWE check requires its environment
+  image. No new tool-call case was skipped.
+- Latest full-set decontamination: **1 prompt, 0 flagged**, no hits; fingerprint
+  SHA matches the earlier recorded full set.
+- Latest pasted canary output ends before its summary. The earlier complete
+  scan reported 0 hits; do not claim a newly completed canary run from this paste.
+
+Focused PR: https://github.com/saitej123/era-v5-lab/pull/109
+Base: `saitej123/era-v5-lab:g10-week3-post-training`.
+Head: `LokeshJatangi:g10-week3-tool-call-verifier-core-LokeshJatangi`,
+commit `1c47932`, nine core files only. The PR was temporarily made draft for
+this verification; its description is updated with these results and it is
+being returned to ready-for-review status. No model execution is required.
+The full checkpoint branch still contains deferred v2 work and is not the PR
+branch. Research/handoff documents stay outside the focused PR.
