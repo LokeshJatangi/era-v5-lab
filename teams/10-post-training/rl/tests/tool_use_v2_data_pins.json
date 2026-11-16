@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "eligibility": "eval",
+  "language": "en",
+  "purpose": "pinned public evaluation subset; never RL training data",
+  "sources": {
+    "bfcl": {
+      "card": "https://huggingface.co/datasets/gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+      "revision": "61fc0608cfd831fcfbbaa676ebdfef0ed963eeda",
+      "licence": "apache-2.0"
+    },
+    "when2call": {
+      "card": "https://huggingface.co/datasets/nvidia/When2Call",
+      "revision": "0582f7749df63a96fdc3070932e83e72396ace53",
+      "licence": "cc-by-4.0",
+      "attribution": "Ross, Mahabaleshwarkar and Suhara, When2Call: When (not) to Call Tools, NAACL 2025, arXiv:2504.18851"
+    }
+  },
+  "files": [
+    {
+      "path": "bfcl/BFCL_v3_irrelevance.json",
+      "dataset": "gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+      "revision": "61fc0608cfd831fcfbbaa676ebdfef0ed963eeda",
+      "source_file": "BFCL_v3_irrelevance.json",
+      "url": "https://huggingface.co/datasets/gorilla-llm/Berkeley-Function-Calling-Leaderboard/resolve/61fc0608cfd831fcfbbaa676ebdfef0ed963eeda/BFCL_v3_irrelevance.json",
+      "licence": "apache-2.0",
+      "sha256": "975f51c51f688649fd190078efd87081241e0a326f9114a2ea3c1ca2440d8690",
+      "bytes": 160114,
+      "rows": 240
+    },
+    {
+      "path": "bfcl/BFCL_v3_multiple.json",
+      "dataset": "gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+      "revision": "61fc0608cfd831fcfbbaa676ebdfef0ed963eeda",
+      "source_file": "BFCL_v3_multiple.json",
+      "url": "https://huggingface.co/datasets/gorilla-llm/Berkeley-Function-Calling-Leaderboard/resolve/61fc0608cfd831fcfbbaa676ebdfef0ed963eeda/BFCL_v3_multiple.json",
+      "licence": "apache-2.0",
+      "sha256": "aef168155ebd74b7ac2401198b201343bc7d16d7a3d7e0d4e6d8ee82c6969b2a",
+      "bytes": 316583,
+      "rows": 200
+    },
+    {
+      "path": "bfcl/BFCL_v3_simple.json",
+      "dataset": "gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+      "revision": "61fc0608cfd831fcfbbaa676ebdfef0ed963eeda",
+      "source_file": "BFCL_v3_simple.json",
+      "url": "https://huggingface.co/datasets/gorilla-llm/Berkeley-Function-Calling-Leaderboard/resolve/61fc0608cfd831fcfbbaa676ebdfef0ed963eeda/BFCL_v3_simple.json",
+      "licence": "apache-2.0",
+      "sha256": "fbc37b2ad252bf9af985582e0e07b456173fe627d957491472ea9cef5fb83158",
+      "bytes": 280474,
+      "rows": 400
+    },
+    {
+      "path": "bfcl/possible_answer/BFCL_v3_multiple.json",
+      "dataset": "gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+      "revision": "61fc0608cfd831fcfbbaa676ebdfef0ed963eeda",
+      "source_file": "possible_answer/BFCL_v3_multiple.json",
+      "url": "https://huggingface.co/datasets/gorilla-llm/Berkeley-Function-Calling-Leaderboard/resolve/61fc0608cfd831fcfbbaa676ebdfef0ed963eeda/possible_answer/BFCL_v3_multiple.json",
+      "licence": "apache-2.0",
+      "sha256": "244e00ce9395df948bcafc7bee64e8f9c87ef70887587d83cae45b13699f3047",
+      "bytes": 32254,
+      "rows": 200
+    },
+    {
+      "path": "bfcl/possible_answer/BFCL_v3_simple.json",
+      "dataset": "gorilla-llm/Berkeley-Function-Calling-Leaderboard",
+      "revision": "61fc0608cfd831fcfbbaa676ebdfef0ed963eeda",
+      "source_file": "possible_answer/BFCL_v3_simple.json",
+      "url": "https://huggingface.co/datasets/gorilla-llm/Berkeley-Function-Calling-Leaderboard/resolve/61fc0608cfd831fcfbbaa676ebdfef0ed963eeda/possible_answer/BFCL_v3_simple.json",
+      "licence": "apache-2.0",
+      "sha256": "2911a2bc00df82c4f999ffa64fedb0164cb88e96212ffa5972087eb91fd496ee",
+      "bytes": 60809,
+      "rows": 400
+    },
+    {
+      "path": "when2call/test.jsonl",
+      "dataset": "nvidia/When2Call",
+      "revision": "0582f7749df63a96fdc3070932e83e72396ace53",
+      "source_file": "test/when2call_test_llm_judge.jsonl",
+      "url": "https://huggingface.co/datasets/nvidia/When2Call/resolve/0582f7749df63a96fdc3070932e83e72396ace53/test/when2call_test_llm_judge.jsonl",
+      "licence": "cc-by-4.0",
+      "sha256": "0b710578e3b02479e5acf5688140ec5edf71383fa5c093481c7536b57fd13b25",
+      "bytes": 1757306,
+      "rows": 300
+    }
+  ]
+}
